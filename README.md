@@ -18,6 +18,9 @@ model.worldbody_.body_[0].pose
 # Show the kinematic tree in graphviz
 model.to_dot()
 ```
+And here's what the generated graph looks like:
+![graph](https://github.com/user-attachments/assets/4254a9c1-ad0b-4644-be4d-2d089a766c91)
+
 
 # How it Works:
 
