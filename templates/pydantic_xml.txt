@@ -1,0 +1,42 @@
+from pathlib import Path
+from typing import List, Optional, Dict
+from pydantic_xml import attr, BaseXmlModel
+from pydantic import PrivateAttr
+
+{% for element in elements recursive %}
+class {{ element.tag | capitalize }}(BaseXmlModel, tag="{{ element.tag }}", search_mode="unordered"):
+{% if element.tag == "mujoco" %}
+    _filename: Path = PrivateAttr(default_factory=Path)
+    _joint_order: Dict[str, List[str]] = PrivateAttr(default_factory=dict)
+    _tendon_order: Dict[str, List[str]] = PrivateAttr(default_factory=dict)
+{% endif %}
+{% for attribute in element.attributes %}
+    {{ attribute }}_: str = attr("{{ attribute }}", default=None)
+{% endfor %}
+
+{% filter indent(width=4) %}
+    {{ loop(element.children) }}
+{% endfilter %}
+{% if element.type == "R" %}
+    {{element.tag}}_: List["{{ element.tag | capitalize }}"] = []
+{% endif %}
+
+{% for child in element.children %}
+{% if child.tag == "body" and element.nesting == 0 %}
+    class Worldbody(Body, tag="worldbody", search_mode="unordered"):
+        pass
+
+    worldbody_: Optional[Worldbody] = None
+{% elif child.type == "!" %}
+    {{child.tag}}_: {{ child.tag | capitalize }}
+{% elif child.type == "?" %}
+    {{child.tag}}_: Optional[{{ child.tag | capitalize }}] = None
+{% elif child.type == "*" %}
+    {{child.tag}}_: List[{{ child.tag | capitalize }}] = []
+{% elif child.type == "R" %}
+    {{child.tag}}_: Optional[{{ child.tag | capitalize }}] = None
+{% endif %}
+{% endfor %}
+{% endfor %}
+
+from myobody.extensions import *
