@@ -2,7 +2,7 @@ import copy
 import os
 import shutil
 from pathlib import Path
-from typing import List, Optional, Dict
+import subprocess
 
 import graphviz
 import numpy as np
@@ -187,9 +187,7 @@ class MujocoMixin:
 
             queue += [(body.name_, body) for body in body.body_]
 
-        sites = {
-            site.name_: body.name_ for body in self.worldbody_.bodies() for site in body.site_
-        }
+        sites = {site.name_: body.name_ for body in self.worldbody_.bodies() for site in body.site_}
 
         for tendon in self.tendon_:
             for spatial in tendon.spatial_:
@@ -213,3 +211,7 @@ class MujocoMixin:
             return next(body for body in self.worldbody_.bodies() if body.name_ == name)
         except StopIteration:
             return None
+
+    def simulate(self, out_path=Path("/tmp/mujoco_model.xml")):
+        self.save(out_path)
+        subprocess.run(f"python -m mujoco.viewer --mjcf={out_path}".split(" "))
