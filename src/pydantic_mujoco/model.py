@@ -12,22 +12,22 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
     model_: str = attr("model", default=None)
 
     class Compiler(BaseXmlModel, tag="compiler", search_mode="unordered"):
+        alignfree_: str = attr("alignfree", default=None)
         angle_: str = attr("angle", default=None)
         assetdir_: str = attr("assetdir", default=None)
         autolimits_: str = attr("autolimits", default=None)
         balanceinertia_: str = attr("balanceinertia", default=None)
         boundinertia_: str = attr("boundinertia", default=None)
         boundmass_: str = attr("boundmass", default=None)
-        convexhull_: str = attr("convexhull", default=None)
         coordinate_: str = attr("coordinate", default=None)
         discardvisual_: str = attr("discardvisual", default=None)
         eulerseq_: str = attr("eulerseq", default=None)
-        exactmeshinertia_: str = attr("exactmeshinertia", default=None)
         fitaabb_: str = attr("fitaabb", default=None)
         fusestatic_: str = attr("fusestatic", default=None)
         inertiafromgeom_: str = attr("inertiafromgeom", default=None)
         inertiagrouprange_: str = attr("inertiagrouprange", default=None)
         meshdir_: str = attr("meshdir", default=None)
+        saveinertial_: str = attr("saveinertial", default=None)
         settotalmass_: str = attr("settotalmass", default=None)
         strippath_: str = attr("strippath", default=None)
         texturedir_: str = attr("texturedir", default=None)
@@ -49,7 +49,8 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
 
     class Option(BaseXmlModel, tag="option", search_mode="unordered"):
         actuatorgroupdisable_: str = attr("actuatorgroupdisable", default=None)
-        apirate_: str = attr("apirate", default=None)
+        ccd_iterations_: str = attr("ccd_iterations", default=None)
+        ccd_tolerance_: str = attr("ccd_tolerance", default=None)
         cone_: str = attr("cone", default=None)
         density_: str = attr("density", default=None)
         gravity_: str = attr("gravity", default=None)
@@ -60,8 +61,6 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
         ls_iterations_: str = attr("ls_iterations", default=None)
         ls_tolerance_: str = attr("ls_tolerance", default=None)
         magnetic_: str = attr("magnetic", default=None)
-        mpr_iterations_: str = attr("mpr_iterations", default=None)
-        mpr_tolerance_: str = attr("mpr_tolerance", default=None)
         noslip_iterations_: str = attr("noslip_iterations", default=None)
         noslip_tolerance_: str = attr("noslip_tolerance", default=None)
         o_friction_: str = attr("o_friction", default=None)
@@ -70,6 +69,7 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
         o_solref_: str = attr("o_solref", default=None)
         sdf_initpoints_: str = attr("sdf_initpoints", default=None)
         sdf_iterations_: str = attr("sdf_iterations", default=None)
+        sleep_tolerance_: str = attr("sleep_tolerance", default=None)
         solver_: str = attr("solver", default=None)
         timestep_: str = attr("timestep", default=None)
         tolerance_: str = attr("tolerance", default=None)
@@ -82,6 +82,7 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
             clampctrl_: str = attr("clampctrl", default=None)
             constraint_: str = attr("constraint", default=None)
             contact_: str = attr("contact", default=None)
+            damper_: str = attr("damper", default=None)
             energy_: str = attr("energy", default=None)
             equality_: str = attr("equality", default=None)
             eulerdamp_: str = attr("eulerdamp", default=None)
@@ -94,10 +95,12 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
             limit_: str = attr("limit", default=None)
             midphase_: str = attr("midphase", default=None)
             multiccd_: str = attr("multiccd", default=None)
+            nativeccd_: str = attr("nativeccd", default=None)
             override_: str = attr("override", default=None)
-            passive_: str = attr("passive", default=None)
             refsafe_: str = attr("refsafe", default=None)
             sensor_: str = attr("sensor", default=None)
+            sleep_: str = attr("sleep", default=None)
+            spring_: str = attr("spring", default=None)
             warmstart_: str = attr("warmstart", default=None)
 
         flag_: Optional[Flag] = None
@@ -123,6 +126,7 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
         class Global(BaseXmlModel, tag="global", search_mode="unordered"):
             azimuth_: str = attr("azimuth", default=None)
             bvactive_: str = attr("bvactive", default=None)
+            cameraid_: str = attr("cameraid", default=None)
             elevation_: str = attr("elevation", default=None)
             ellipsoidinertia_: str = attr("ellipsoidinertia", default=None)
             fovy_: str = attr("fovy", default=None)
@@ -226,6 +230,7 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
         class_: str = attr("class", default=None)
 
         class Mesh(BaseXmlModel, tag="mesh", search_mode="unordered"):
+            inertia_: str = attr("inertia", default=None)
             maxhullvert_: str = attr("maxhullvert", default=None)
             scale_: str = attr("scale", default=None)
 
@@ -241,7 +246,13 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
             texture_: str = attr("texture", default=None)
             texuniform_: str = attr("texuniform", default=None)
 
-        class Joint(BaseXmlModel, tag="joint", search_mode="unordered"):
+            class Layer(BaseXmlModel, tag="layer", search_mode="unordered"):
+                role_: str = attr("role", default=None)
+                texture_: str = attr("texture", default=None)
+
+            layer_: List[Layer] = []
+
+        class Joint(JointMixin, BaseXmlModel, tag="joint", search_mode="unordered"):
             actuatorfrclimited_: str = attr("actuatorfrclimited", default=None)
             actuatorfrcrange_: str = attr("actuatorfrcrange", default=None)
             actuatorgravcomp_: str = attr("actuatorgravcomp", default=None)
@@ -343,9 +354,12 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
             dir_: str = attr("dir", default=None)
             directional_: str = attr("directional", default=None)
             exponent_: str = attr("exponent", default=None)
+            intensity_: str = attr("intensity", default=None)
             mode_: str = attr("mode", default=None)
             pos_: str = attr("pos", default=None)
+            range_: str = attr("range", default=None)
             specular_: str = attr("specular", default=None)
+            type_: str = attr("type", default=None)
 
         class Pair(BaseXmlModel, tag="pair", search_mode="unordered"):
             condim_: str = attr("condim", default=None)
@@ -569,13 +583,17 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
     class Asset(BaseXmlModel, tag="asset", search_mode="unordered"):
 
         class Mesh(BaseXmlModel, tag="mesh", search_mode="unordered"):
+            builtin_: str = attr("builtin", default=None)
             class_: str = attr("class", default=None)
             content_type_: str = attr("content_type", default=None)
             face_: str = attr("face", default=None)
             file_: str = attr("file", default=None)
+            inertia_: str = attr("inertia", default=None)
+            material_: str = attr("material", default=None)
             maxhullvert_: str = attr("maxhullvert", default=None)
             name_: str = attr("name", default=None)
             normal_: str = attr("normal", default=None)
+            params_: str = attr("params", default=None)
             refpos_: str = attr("refpos", default=None)
             refquat_: str = attr("refquat", default=None)
             scale_: str = attr("scale", default=None)
@@ -626,6 +644,7 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
 
         class Texture(BaseXmlModel, tag="texture", search_mode="unordered"):
             builtin_: str = attr("builtin", default=None)
+            colorspace_: str = attr("colorspace", default=None)
             content_type_: str = attr("content_type", default=None)
             file_: str = attr("file", default=None)
             fileback_: str = attr("fileback", default=None)
@@ -663,44 +682,14 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
             texture_: str = attr("texture", default=None)
             texuniform_: str = attr("texuniform", default=None)
 
-            class Rgb(BaseXmlModel, tag="rgb", search_mode="unordered"):
+            class Layer(BaseXmlModel, tag="layer", search_mode="unordered"):
+                role_: str = attr("role", default=None)
                 texture_: str = attr("texture", default=None)
 
-            class Occlusion(BaseXmlModel, tag="occlusion", search_mode="unordered"):
-                texture_: str = attr("texture", default=None)
-
-            class Roughness(BaseXmlModel, tag="roughness", search_mode="unordered"):
-                texture_: str = attr("texture", default=None)
-
-            class Metallic(BaseXmlModel, tag="metallic", search_mode="unordered"):
-                texture_: str = attr("texture", default=None)
-
-            class Normal(BaseXmlModel, tag="normal", search_mode="unordered"):
-                texture_: str = attr("texture", default=None)
-
-            class Opacity(BaseXmlModel, tag="opacity", search_mode="unordered"):
-                texture_: str = attr("texture", default=None)
-
-            class Emissive(BaseXmlModel, tag="emissive", search_mode="unordered"):
-                texture_: str = attr("texture", default=None)
-
-            class Rgba(BaseXmlModel, tag="rgba", search_mode="unordered"):
-                texture_: str = attr("texture", default=None)
-
-            class Orm(BaseXmlModel, tag="orm", search_mode="unordered"):
-                texture_: str = attr("texture", default=None)
-
-            rgb_: Optional[Rgb] = None
-            occlusion_: Optional[Occlusion] = None
-            roughness_: Optional[Roughness] = None
-            metallic_: Optional[Metallic] = None
-            normal_: Optional[Normal] = None
-            opacity_: Optional[Opacity] = None
-            emissive_: Optional[Emissive] = None
-            rgba_: Optional[Rgba] = None
-            orm_: Optional[Orm] = None
+            layer_: List[Layer] = []
 
         class Model(BaseXmlModel, tag="model", search_mode="unordered"):
+            content_type_: str = attr("content_type", default=None)
             file_: str = attr("file", default=None)
             name_: str = attr("name", default=None)
 
@@ -720,6 +709,7 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
         name_: str = attr("name", default=None)
         pos_: str = attr("pos", default=None)
         quat_: str = attr("quat", default=None)
+        sleep_: str = attr("sleep", default=None)
         user_: str = attr("user", default=None)
         xyaxes_: str = attr("xyaxes", default=None)
         zaxis_: str = attr("zaxis", default=None)
@@ -762,6 +752,7 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
             user_: str = attr("user", default=None)
 
         class Freejoint(BaseXmlModel, tag="freejoint", search_mode="unordered"):
+            align_: str = attr("align", default=None)
             group_: str = attr("group", default=None)
             name_: str = attr("name", default=None)
 
@@ -868,11 +859,15 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
             dir_: str = attr("dir", default=None)
             directional_: str = attr("directional", default=None)
             exponent_: str = attr("exponent", default=None)
+            intensity_: str = attr("intensity", default=None)
             mode_: str = attr("mode", default=None)
             name_: str = attr("name", default=None)
             pos_: str = attr("pos", default=None)
+            range_: str = attr("range", default=None)
             specular_: str = attr("specular", default=None)
             target_: str = attr("target", default=None)
+            texture_: str = attr("texture", default=None)
+            type_: str = attr("type", default=None)
 
         class Plugin(BaseXmlModel, tag="plugin", search_mode="unordered"):
             instance_: str = attr("instance", default=None)
@@ -887,15 +882,11 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
         class Composite(BaseXmlModel, tag="composite", search_mode="unordered"):
             count_: str = attr("count", default=None)
             curve_: str = attr("curve", default=None)
-            face_: str = attr("face", default=None)
-            flatinertia_: str = attr("flatinertia", default=None)
             initial_: str = attr("initial", default=None)
             offset_: str = attr("offset", default=None)
             prefix_: str = attr("prefix", default=None)
+            quat_: str = attr("quat", default=None)
             size_: str = attr("size", default=None)
-            solimpsmooth_: str = attr("solimpsmooth", default=None)
-            solrefsmooth_: str = attr("solrefsmooth", default=None)
-            spacing_: str = attr("spacing", default=None)
             type_: str = attr("type", default=None)
             vertex_: str = attr("vertex", default=None)
 
@@ -917,25 +908,6 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
                 solreflimit_: str = attr("solreflimit", default=None)
                 stiffness_: str = attr("stiffness", default=None)
                 type_: str = attr("type", default=None)
-
-            class Tendon(BaseXmlModel, tag="tendon", search_mode="unordered"):
-                damping_: str = attr("damping", default=None)
-                frictionloss_: str = attr("frictionloss", default=None)
-                group_: str = attr("group", default=None)
-                kind_: str = attr("kind", default=None)
-                limited_: str = attr("limited", default=None)
-                margin_: str = attr("margin", default=None)
-                material_: str = attr("material", default=None)
-                range_: str = attr("range", default=None)
-                rgba_: str = attr("rgba", default=None)
-                solimpfix_: str = attr("solimpfix", default=None)
-                solimpfriction_: str = attr("solimpfriction", default=None)
-                solimplimit_: str = attr("solimplimit", default=None)
-                solreffix_: str = attr("solreffix", default=None)
-                solreffriction_: str = attr("solreffriction", default=None)
-                solreflimit_: str = attr("solreflimit", default=None)
-                stiffness_: str = attr("stiffness", default=None)
-                width_: str = attr("width", default=None)
 
             class Skin(BaseXmlModel, tag="skin", search_mode="unordered"):
                 group_: str = attr("group", default=None)
@@ -970,9 +942,6 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
                 rgba_: str = attr("rgba", default=None)
                 size_: str = attr("size", default=None)
 
-            class Pin(BaseXmlModel, tag="pin", search_mode="unordered"):
-                coord_: str = attr("coord", default=None)
-
             class Plugin(BaseXmlModel, tag="plugin", search_mode="unordered"):
                 instance_: str = attr("instance", default=None)
                 plugin_: str = attr("plugin", default=None)
@@ -984,17 +953,16 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
                 config_: List[Config] = []
 
             joint_: List[Joint] = []
-            tendon_: List[Tendon] = []
             skin_: Optional[Skin] = None
             geom_: Optional[Geom] = None
             site_: Optional[Site] = None
-            pin_: List[Pin] = []
             plugin_: List[Plugin] = []
 
-        class Flexcomp(BaseXmlModel, tag="flexcomp", search_mode="unordered"):
+        class Flexcomp(PoseMixin, BaseXmlModel, tag="flexcomp", search_mode="unordered"):
             axisangle_: str = attr("axisangle", default=None)
             count_: str = attr("count", default=None)
             dim_: str = attr("dim", default=None)
+            dof_: str = attr("dof", default=None)
             element_: str = attr("element", default=None)
             euler_: str = attr("euler", default=None)
             file_: str = attr("file", default=None)
@@ -1004,6 +972,7 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
             mass_: str = attr("mass", default=None)
             material_: str = attr("material", default=None)
             name_: str = attr("name", default=None)
+            origin_: str = attr("origin", default=None)
             point_: str = attr("point", default=None)
             pos_: str = attr("pos", default=None)
             quat_: str = attr("quat", default=None)
@@ -1024,6 +993,13 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
                 solref_: str = attr("solref", default=None)
                 stiffness_: str = attr("stiffness", default=None)
 
+            class Elasticity(BaseXmlModel, tag="elasticity", search_mode="unordered"):
+                damping_: str = attr("damping", default=None)
+                elastic2d_: str = attr("elastic2d", default=None)
+                poisson_: str = attr("poisson", default=None)
+                thickness_: str = attr("thickness", default=None)
+                young_: str = attr("young", default=None)
+
             class Contact(BaseXmlModel, tag="contact", search_mode="unordered"):
                 activelayers_: str = attr("activelayers", default=None)
                 conaffinity_: str = attr("conaffinity", default=None)
@@ -1033,11 +1009,13 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
                 gap_: str = attr("gap", default=None)
                 internal_: str = attr("internal", default=None)
                 margin_: str = attr("margin", default=None)
+                passive_: str = attr("passive", default=None)
                 priority_: str = attr("priority", default=None)
                 selfcollide_: str = attr("selfcollide", default=None)
                 solimp_: str = attr("solimp", default=None)
                 solmix_: str = attr("solmix", default=None)
                 solref_: str = attr("solref", default=None)
+                vertcollide_: str = attr("vertcollide", default=None)
 
             class Pin(BaseXmlModel, tag="pin", search_mode="unordered"):
                 grid_: str = attr("grid", default=None)
@@ -1056,6 +1034,7 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
                 config_: List[Config] = []
 
             edge_: Optional[Edge] = None
+            elasticity_: Optional[Elasticity] = None
             contact_: Optional[Contact] = None
             pin_: List[Pin] = []
             plugin_: List[Plugin] = []
@@ -1080,10 +1059,12 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
             body_: str = attr("body", default=None)
             dim_: str = attr("dim", default=None)
             element_: str = attr("element", default=None)
+            elemtexcoord_: str = attr("elemtexcoord", default=None)
             flatskin_: str = attr("flatskin", default=None)
             group_: str = attr("group", default=None)
             material_: str = attr("material", default=None)
             name_: str = attr("name", default=None)
+            node_: str = attr("node", default=None)
             radius_: str = attr("radius", default=None)
             rgba_: str = attr("rgba", default=None)
             texcoord_: str = attr("texcoord", default=None)
@@ -1098,18 +1079,28 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
                 gap_: str = attr("gap", default=None)
                 internal_: str = attr("internal", default=None)
                 margin_: str = attr("margin", default=None)
+                passive_: str = attr("passive", default=None)
                 priority_: str = attr("priority", default=None)
                 selfcollide_: str = attr("selfcollide", default=None)
                 solimp_: str = attr("solimp", default=None)
                 solmix_: str = attr("solmix", default=None)
                 solref_: str = attr("solref", default=None)
+                vertcollide_: str = attr("vertcollide", default=None)
 
             class Edge(BaseXmlModel, tag="edge", search_mode="unordered"):
                 damping_: str = attr("damping", default=None)
                 stiffness_: str = attr("stiffness", default=None)
 
+            class Elasticity(BaseXmlModel, tag="elasticity", search_mode="unordered"):
+                damping_: str = attr("damping", default=None)
+                elastic2d_: str = attr("elastic2d", default=None)
+                poisson_: str = attr("poisson", default=None)
+                thickness_: str = attr("thickness", default=None)
+                young_: str = attr("young", default=None)
+
             contact_: Optional[Contact] = None
             edge_: Optional[Edge] = None
+            elasticity_: Optional[Elasticity] = None
 
         class Skin(BaseXmlModel, tag="skin", search_mode="unordered"):
             face_: str = attr("face", default=None)
@@ -1166,6 +1157,8 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
             body2_: str = attr("body2", default=None)
             class_: str = attr("class", default=None)
             name_: str = attr("name", default=None)
+            site1_: str = attr("site1", default=None)
+            site2_: str = attr("site2", default=None)
             solimp_: str = attr("solimp", default=None)
             solref_: str = attr("solref", default=None)
 
@@ -1177,6 +1170,8 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
             class_: str = attr("class", default=None)
             name_: str = attr("name", default=None)
             relpose_: str = attr("relpose", default=None)
+            site1_: str = attr("site1", default=None)
+            site2_: str = attr("site2", default=None)
             solimp_: str = attr("solimp", default=None)
             solref_: str = attr("solref", default=None)
             torquescale_: str = attr("torquescale", default=None)
@@ -1218,6 +1213,9 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
     class Tendon(BaseXmlModel, tag="tendon", search_mode="unordered"):
 
         class Spatial(BaseXmlModel, tag="spatial", search_mode="unordered"):
+            actuatorfrclimited_: str = attr("actuatorfrclimited", default=None)
+            actuatorfrcrange_: str = attr("actuatorfrcrange", default=None)
+            armature_: str = attr("armature", default=None)
             class_: str = attr("class", default=None)
             damping_: str = attr("damping", default=None)
             frictionloss_: str = attr("frictionloss", default=None)
@@ -1252,6 +1250,9 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
             pulley_: List[Pulley] = []
 
         class Fixed(BaseXmlModel, tag="fixed", search_mode="unordered"):
+            actuatorfrclimited_: str = attr("actuatorfrclimited", default=None)
+            actuatorfrcrange_: str = attr("actuatorfrcrange", default=None)
+            armature_: str = attr("armature", default=None)
             class_: str = attr("class", default=None)
             damping_: str = attr("damping", default=None)
             frictionloss_: str = attr("frictionloss", default=None)
@@ -1650,6 +1651,13 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
             noise_: str = attr("noise", default=None)
             user_: str = attr("user", default=None)
 
+        class Tendonactuatorfrc(BaseXmlModel, tag="tendonactuatorfrc", search_mode="unordered"):
+            cutoff_: str = attr("cutoff", default=None)
+            name_: str = attr("name", default=None)
+            noise_: str = attr("noise", default=None)
+            tendon_: str = attr("tendon", default=None)
+            user_: str = attr("user", default=None)
+
         class Ballquat(BaseXmlModel, tag="ballquat", search_mode="unordered"):
             cutoff_: str = attr("cutoff", default=None)
             joint_: str = attr("joint", default=None)
@@ -1813,6 +1821,15 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
             noise_: str = attr("noise", default=None)
             user_: str = attr("user", default=None)
 
+        class Insidesite(BaseXmlModel, tag="insidesite", search_mode="unordered"):
+            cutoff_: str = attr("cutoff", default=None)
+            name_: str = attr("name", default=None)
+            noise_: str = attr("noise", default=None)
+            objname_: str = attr("objname", default=None)
+            objtype_: str = attr("objtype", default=None)
+            site_: str = attr("site", default=None)
+            user_: str = attr("user", default=None)
+
         class Distance(BaseXmlModel, tag="distance", search_mode="unordered"):
             body1_: str = attr("body1", default=None)
             body2_: str = attr("body2", default=None)
@@ -1843,6 +1860,34 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
             noise_: str = attr("noise", default=None)
             user_: str = attr("user", default=None)
 
+        class Contact(BaseXmlModel, tag="contact", search_mode="unordered"):
+            body1_: str = attr("body1", default=None)
+            body2_: str = attr("body2", default=None)
+            cutoff_: str = attr("cutoff", default=None)
+            data_: str = attr("data", default=None)
+            geom1_: str = attr("geom1", default=None)
+            geom2_: str = attr("geom2", default=None)
+            name_: str = attr("name", default=None)
+            noise_: str = attr("noise", default=None)
+            num_: str = attr("num", default=None)
+            reduce_: str = attr("reduce", default=None)
+            site_: str = attr("site", default=None)
+            subtree1_: str = attr("subtree1", default=None)
+            subtree2_: str = attr("subtree2", default=None)
+            user_: str = attr("user", default=None)
+
+        class E_potential(BaseXmlModel, tag="e_potential", search_mode="unordered"):
+            cutoff_: str = attr("cutoff", default=None)
+            name_: str = attr("name", default=None)
+            noise_: str = attr("noise", default=None)
+            user_: str = attr("user", default=None)
+
+        class E_kinetic(BaseXmlModel, tag="e_kinetic", search_mode="unordered"):
+            cutoff_: str = attr("cutoff", default=None)
+            name_: str = attr("name", default=None)
+            noise_: str = attr("noise", default=None)
+            user_: str = attr("user", default=None)
+
         class Clock(BaseXmlModel, tag="clock", search_mode="unordered"):
             cutoff_: str = attr("cutoff", default=None)
             name_: str = attr("name", default=None)
@@ -1858,6 +1903,12 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
             noise_: str = attr("noise", default=None)
             objname_: str = attr("objname", default=None)
             objtype_: str = attr("objtype", default=None)
+            user_: str = attr("user", default=None)
+
+        class Tactile(BaseXmlModel, tag="tactile", search_mode="unordered"):
+            geom_: str = attr("geom", default=None)
+            mesh_: str = attr("mesh", default=None)
+            name_: str = attr("name", default=None)
             user_: str = attr("user", default=None)
 
         class Plugin(BaseXmlModel, tag="plugin", search_mode="unordered"):
@@ -1894,6 +1945,7 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
         actuatorvel_: List[Actuatorvel] = []
         actuatorfrc_: List[Actuatorfrc] = []
         jointactuatorfrc_: List[Jointactuatorfrc] = []
+        tendonactuatorfrc_: List[Tendonactuatorfrc] = []
         ballquat_: List[Ballquat] = []
         ballangvel_: List[Ballangvel] = []
         jointlimitpos_: List[Jointlimitpos] = []
@@ -1914,11 +1966,16 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
         subtreecom_: List[Subtreecom] = []
         subtreelinvel_: List[Subtreelinvel] = []
         subtreeangmom_: List[Subtreeangmom] = []
+        insidesite_: List[Insidesite] = []
         distance_: List[Distance] = []
         normal_: List[Normal] = []
         fromto_: List[Fromto] = []
+        contact_: List[Contact] = []
+        e_potential_: List[E_potential] = []
+        e_kinetic_: List[E_kinetic] = []
         clock_: List[Clock] = []
         user_: List[User] = []
+        tactile_: List[Tactile] = []
         plugin_: List[Plugin] = []
 
     class Keyframe(BaseXmlModel, tag="keyframe", search_mode="unordered"):
@@ -1956,4 +2013,3 @@ class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
     actuator_: List[Actuator] = []
     sensor_: List[Sensor] = []
     keyframe_: List[Keyframe] = []
-
