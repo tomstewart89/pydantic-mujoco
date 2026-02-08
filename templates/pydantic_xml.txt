@@ -2,9 +2,15 @@ from pathlib import Path
 from typing import List, Optional, Dict
 from pydantic_xml import attr, BaseXmlModel
 from pydantic import PrivateAttr
+from pydantic_mujoco.mixins import MujocoMixin, BodyMixin, PoseMixin, JointMixin
 
 {% for element in elements recursive %}
-class {{ element.tag | capitalize }}(BaseXmlModel, tag="{{ element.tag }}", search_mode="unordered"):
+{% set mixins = [] %}
+{% if element.tag == "mujoco" %}{% if mixins.append("MujocoMixin") %}{% endif %}{% endif %}
+{% if element.tag == "body" %}{% if mixins.append("BodyMixin") %}{% endif %}{% if mixins.append("PoseMixin") %}{% endif %}{% endif %}
+{% if element.tag != "body" and "pos" in element.attributes and "quat" in element.attributes %}{% if mixins.append("PoseMixin") %}{% endif %}{% endif %}
+{% if element.tag == "joint" and "axis" in element.attributes and "pos" in element.attributes %}{% if mixins.append("JointMixin") %}{% endif %}{% endif %}
+class {{ element.tag | capitalize }}({{ mixins | join(", ") }}{{ ", " if mixins }}BaseXmlModel, tag="{{ element.tag }}", search_mode="unordered"):
 {% if element.tag == "mujoco" %}
     _filename: Path = PrivateAttr(default_factory=Path)
     _joint_order: Dict[str, List[str]] = PrivateAttr(default_factory=dict)
@@ -38,5 +44,3 @@ class {{ element.tag | capitalize }}(BaseXmlModel, tag="{{ element.tag }}", sear
 {% endif %}
 {% endfor %}
 {% endfor %}
-
-from myobody.extensions import *

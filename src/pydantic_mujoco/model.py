@@ -2,9 +2,10 @@ from pathlib import Path
 from typing import List, Optional, Dict
 from pydantic_xml import attr, BaseXmlModel
 from pydantic import PrivateAttr
+from pydantic_mujoco.mixins import MujocoMixin, BodyMixin, PoseMixin, JointMixin
 
 
-class Mujoco(BaseXmlModel, tag="mujoco", search_mode="unordered"):
+class Mujoco(MujocoMixin, BaseXmlModel, tag="mujoco", search_mode="unordered"):
     _filename: Path = PrivateAttr(default_factory=Path)
     _joint_order: Dict[str, List[str]] = PrivateAttr(default_factory=dict)
     _tendon_order: Dict[str, List[str]] = PrivateAttr(default_factory=dict)
@@ -264,7 +265,7 @@ class Mujoco(BaseXmlModel, tag="mujoco", search_mode="unordered"):
             type_: str = attr("type", default=None)
             user_: str = attr("user", default=None)
 
-        class Geom(BaseXmlModel, tag="geom", search_mode="unordered"):
+        class Geom(PoseMixin, BaseXmlModel, tag="geom", search_mode="unordered"):
             axisangle_: str = attr("axisangle", default=None)
             conaffinity_: str = attr("conaffinity", default=None)
             condim_: str = attr("condim", default=None)
@@ -297,7 +298,7 @@ class Mujoco(BaseXmlModel, tag="mujoco", search_mode="unordered"):
             xyaxes_: str = attr("xyaxes", default=None)
             zaxis_: str = attr("zaxis", default=None)
 
-        class Site(BaseXmlModel, tag="site", search_mode="unordered"):
+        class Site(PoseMixin, BaseXmlModel, tag="site", search_mode="unordered"):
             axisangle_: str = attr("axisangle", default=None)
             euler_: str = attr("euler", default=None)
             fromto_: str = attr("fromto", default=None)
@@ -312,7 +313,7 @@ class Mujoco(BaseXmlModel, tag="mujoco", search_mode="unordered"):
             xyaxes_: str = attr("xyaxes", default=None)
             zaxis_: str = attr("zaxis", default=None)
 
-        class Camera(BaseXmlModel, tag="camera", search_mode="unordered"):
+        class Camera(PoseMixin, BaseXmlModel, tag="camera", search_mode="unordered"):
             axisangle_: str = attr("axisangle", default=None)
             euler_: str = attr("euler", default=None)
             focal_: str = attr("focal", default=None)
@@ -710,7 +711,7 @@ class Mujoco(BaseXmlModel, tag="mujoco", search_mode="unordered"):
         material_: List[Material] = []
         model_: List[Model] = []
 
-    class Body(BaseXmlModel, tag="body", search_mode="unordered"):
+    class Body(BodyMixin, PoseMixin, BaseXmlModel, tag="body", search_mode="unordered"):
         axisangle_: str = attr("axisangle", default=None)
         childclass_: str = attr("childclass", default=None)
         euler_: str = attr("euler", default=None)
@@ -723,7 +724,7 @@ class Mujoco(BaseXmlModel, tag="mujoco", search_mode="unordered"):
         xyaxes_: str = attr("xyaxes", default=None)
         zaxis_: str = attr("zaxis", default=None)
 
-        class Inertial(BaseXmlModel, tag="inertial", search_mode="unordered"):
+        class Inertial(PoseMixin, BaseXmlModel, tag="inertial", search_mode="unordered"):
             axisangle_: str = attr("axisangle", default=None)
             diaginertia_: str = attr("diaginertia", default=None)
             euler_: str = attr("euler", default=None)
@@ -734,7 +735,7 @@ class Mujoco(BaseXmlModel, tag="mujoco", search_mode="unordered"):
             xyaxes_: str = attr("xyaxes", default=None)
             zaxis_: str = attr("zaxis", default=None)
 
-        class Joint(BaseXmlModel, tag="joint", search_mode="unordered"):
+        class Joint(JointMixin, BaseXmlModel, tag="joint", search_mode="unordered"):
             actuatorfrclimited_: str = attr("actuatorfrclimited", default=None)
             actuatorfrcrange_: str = attr("actuatorfrcrange", default=None)
             actuatorgravcomp_: str = attr("actuatorgravcomp", default=None)
@@ -764,7 +765,7 @@ class Mujoco(BaseXmlModel, tag="mujoco", search_mode="unordered"):
             group_: str = attr("group", default=None)
             name_: str = attr("name", default=None)
 
-        class Geom(BaseXmlModel, tag="geom", search_mode="unordered"):
+        class Geom(PoseMixin, BaseXmlModel, tag="geom", search_mode="unordered"):
             axisangle_: str = attr("axisangle", default=None)
             class_: str = attr("class", default=None)
             conaffinity_: str = attr("conaffinity", default=None)
@@ -816,7 +817,7 @@ class Mujoco(BaseXmlModel, tag="mujoco", search_mode="unordered"):
             model_: str = attr("model", default=None)
             prefix_: str = attr("prefix", default=None)
 
-        class Site(BaseXmlModel, tag="site", search_mode="unordered"):
+        class Site(PoseMixin, BaseXmlModel, tag="site", search_mode="unordered"):
             axisangle_: str = attr("axisangle", default=None)
             class_: str = attr("class", default=None)
             euler_: str = attr("euler", default=None)
@@ -833,7 +834,7 @@ class Mujoco(BaseXmlModel, tag="mujoco", search_mode="unordered"):
             xyaxes_: str = attr("xyaxes", default=None)
             zaxis_: str = attr("zaxis", default=None)
 
-        class Camera(BaseXmlModel, tag="camera", search_mode="unordered"):
+        class Camera(PoseMixin, BaseXmlModel, tag="camera", search_mode="unordered"):
             axisangle_: str = attr("axisangle", default=None)
             class_: str = attr("class", default=None)
             euler_: str = attr("euler", default=None)
@@ -1956,5 +1957,3 @@ class Mujoco(BaseXmlModel, tag="mujoco", search_mode="unordered"):
     sensor_: List[Sensor] = []
     keyframe_: List[Keyframe] = []
 
-
-from pydantic_mujoco.extensions import *

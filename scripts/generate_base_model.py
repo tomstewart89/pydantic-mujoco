@@ -16,7 +16,7 @@ class Element:
 
 
 soup = BeautifulSoup(mujoco.mj_printSchema(True, True), features="lxml")
-environment = Environment(loader=FileSystemLoader("config/templates"), trim_blocks=True)
+environment = Environment(loader=FileSystemLoader("templates"), trim_blocks=True)
 template = environment.get_template("pydantic_xml.txt")
 
 elements = []
