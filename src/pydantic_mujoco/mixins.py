@@ -3,7 +3,7 @@ import os
 import shutil
 from pathlib import Path
 import subprocess
-
+import re
 import graphviz
 import numpy as np
 from lxml import etree as ElementTree
@@ -94,6 +94,24 @@ class BodyMixin:
             queue += body.body_
             yield body
 
+    def transform(self, Source_T_Target: np.ndarray):
+        for site in self.site_:
+            site.pose = Source_T_Target @ site.pose
+
+        for body in self.body_:
+            body.pose = Source_T_Target @ body.pose
+
+        for geom in self.geom_:
+            geom.pose = Source_T_Target @ geom.pose
+
+        for joint in self.joint_:
+            joint.position += Source_T_Target[:3, 3]
+
+    def rename(self, name: str, model):
+        pattern = re.compile(f"^{self.name_}$")
+        model._joint_order = {pattern.sub(name, k): v for k, v in model._joint_order.items()}
+        self.name_ = name
+
 
 class MujocoMixin:
     @classmethod
@@ -159,10 +177,10 @@ class MujocoMixin:
                     if key in ["geom", "site"]
                 ]
 
-                spatial[:] = [spatial[original_order.index(element)] for element in current_order]
+                spatial[:] = [spatial[current_order.index(element)] for element in original_order]
 
         for body in etree.findall(".//body"):
-            if body.attrib["name"] in self._joint_order:
+            if "name" in body.attrib and body.attrib["name"] in self._joint_order:
                 joints = [e for e in body if e.tag == "joint"]
                 original_order = self._joint_order[body.attrib["name"]]
                 current_order = [joint.attrib["name"] for joint in joints]
@@ -211,6 +229,14 @@ class MujocoMixin:
             return next(body for body in self.worldbody_.bodies() if body.name_ == name)
         except StopIteration:
             return None
+
+    def bodies(self):
+        queue = copy.copy(self.body_)
+
+        while queue:
+            body = queue.pop()
+            queue += body.body_
+            yield body
 
     def simulate(self, out_path=Path("/tmp/mujoco_model.xml")):
         self.save(out_path)
